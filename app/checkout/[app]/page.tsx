@@ -1,16 +1,16 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { isValidApp, getAppConfig } from '@/lib/stripe';
-import { CheckoutClient } from './CheckoutClient';
+import { isValidApp, getAppConfig, createCheckoutSession, AppName } from '@/lib/stripe';
+import { CheckoutMessage } from './CheckoutMessage';
 
 interface CheckoutPageProps {
   params: Promise<{ app: string }>;
-  searchParams: Promise<{ canceled?: string; redirect?: string }>;
+  searchParams: Promise<{ canceled?: string }>;
 }
 
 export default async function CheckoutPage({ params, searchParams }: CheckoutPageProps) {
   const { app } = await params;
-  const { canceled, redirect: redirectUrl } = await searchParams;
+  const { canceled } = await searchParams;
 
   // Validate app name
   if (!isValidApp(app)) {
@@ -35,24 +35,50 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   // Check if user already has an active subscription for this app
   const { data: existingSubscription } = await supabase
     .from('subscriptions')
-    .select('*')
+    .select('stripe_customer_id, status')
     .eq('user_id', user.id)
     .eq('app', app)
-    .in('status', ['active', 'trialing'])
     .single();
 
-  if (existingSubscription) {
+  if (existingSubscription?.status === 'active' || existingSubscription?.status === 'trialing') {
     // User already has subscription, redirect to manage page
     redirect(`/manage?app=${app}`);
   }
 
-  return (
-    <CheckoutClient
-      app={app}
-      appDisplayName={appConfig.displayName}
-      userEmail={user.email || ''}
-      canceled={canceled === 'true'}
-      redirectUrl={redirectUrl}
-    />
-  );
+  // If user canceled, show message with retry option
+  if (canceled === 'true') {
+    return (
+      <CheckoutMessage
+        type="canceled"
+        appDisplayName={appConfig.displayName}
+        retryUrl={`/checkout/${app}`}
+      />
+    );
+  }
+
+  // Create Stripe checkout session and redirect directly to Stripe
+  try {
+    const session = await createCheckoutSession({
+      app: app as AppName,
+      userId: user.id,
+      userEmail: user.email || '',
+      customerId: existingSubscription?.stripe_customer_id,
+    });
+
+    if (session.url) {
+      redirect(session.url);
+    }
+  } catch (error) {
+    console.error('Checkout error:', error);
+    return (
+      <CheckoutMessage
+        type="error"
+        appDisplayName={appConfig.displayName}
+        retryUrl={`/checkout/${app}`}
+      />
+    );
+  }
+
+  // Fallback - should not reach here
+  redirect('/');
 }
