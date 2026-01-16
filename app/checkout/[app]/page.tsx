@@ -57,6 +57,9 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
   }
 
   // Create Stripe checkout session and redirect directly to Stripe
+  let checkoutUrl: string | null = null;
+  let checkoutError: Error | null = null;
+
   try {
     const session = await createCheckoutSession({
       app: app as AppName,
@@ -64,12 +67,14 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
       userEmail: user.email || '',
       customerId: existingSubscription?.stripe_customer_id,
     });
-
-    if (session.url) {
-      redirect(session.url);
-    }
+    checkoutUrl = session.url;
   } catch (error) {
     console.error('Checkout error:', error);
+    checkoutError = error as Error;
+  }
+
+  // Handle error
+  if (checkoutError || !checkoutUrl) {
     return (
       <CheckoutMessage
         type="error"
@@ -79,6 +84,6 @@ export default async function CheckoutPage({ params, searchParams }: CheckoutPag
     );
   }
 
-  // Fallback - should not reach here
-  redirect('/');
+  // Redirect to Stripe (outside try/catch)
+  redirect(checkoutUrl);
 }
