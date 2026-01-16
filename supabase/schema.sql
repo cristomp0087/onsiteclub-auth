@@ -21,6 +21,18 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
   current_period_start TIMESTAMPTZ,               -- Subscription period start
   current_period_end TIMESTAMPTZ,                 -- Subscription period end
   cancel_at_period_end BOOLEAN DEFAULT FALSE,     -- Will cancel at period end?
+
+  -- Customer information (from Stripe Checkout)
+  customer_email TEXT,                            -- Customer email
+  customer_name TEXT,                             -- Customer full name
+  customer_phone TEXT,                            -- Customer phone number
+  billing_address_line1 TEXT,                     -- Street address line 1
+  billing_address_line2 TEXT,                     -- Street address line 2 (apt, suite, etc)
+  billing_address_city TEXT,                      -- City
+  billing_address_state TEXT,                     -- State/Province
+  billing_address_postal_code TEXT,               -- ZIP/Postal code
+  billing_address_country TEXT,                   -- Country code (CA, US, BR, etc)
+
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
 
@@ -121,3 +133,52 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Grant execute to authenticated users
 GRANT EXECUTE ON FUNCTION public.has_active_subscription TO authenticated;
+
+-- -------------------------------------------
+-- MIGRATION: Add customer fields to existing table
+-- -------------------------------------------
+-- Run this if the subscriptions table already exists
+-- These commands are safe to run multiple times (IF NOT EXISTS)
+
+DO $$
+BEGIN
+  -- Add customer_email if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'customer_email') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN customer_email TEXT;
+  END IF;
+
+  -- Add customer_name if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'customer_name') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN customer_name TEXT;
+  END IF;
+
+  -- Add customer_phone if not exists
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'customer_phone') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN customer_phone TEXT;
+  END IF;
+
+  -- Add billing address fields
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'billing_address_line1') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN billing_address_line1 TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'billing_address_line2') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN billing_address_line2 TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'billing_address_city') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN billing_address_city TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'billing_address_state') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN billing_address_state TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'billing_address_postal_code') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN billing_address_postal_code TEXT;
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'subscriptions' AND column_name = 'billing_address_country') THEN
+    ALTER TABLE public.subscriptions ADD COLUMN billing_address_country TEXT;
+  END IF;
+END $$;

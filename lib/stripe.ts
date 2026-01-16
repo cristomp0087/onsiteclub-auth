@@ -104,6 +104,12 @@ export async function createCheckoutSession({
       },
     },
     allow_promotion_codes: true,
+    // Collect customer information
+    billing_address_collection: 'required',
+    phone_number_collection: {
+      enabled: true,
+    },
+    customer_creation: 'always',
   };
 
   // If customer already exists, use their ID

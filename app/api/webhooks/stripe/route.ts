@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
 /**
  * Handle checkout.session.completed
  * Creates or updates subscription record when payment is successful
+ * Also saves customer billing information
  */
 async function handleCheckoutCompleted(
   supabase: ReturnType<typeof createAdminClient>,
@@ -89,6 +90,22 @@ async function handleCheckoutCompleted(
   // Get subscription details
   const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
+  // Get customer details (includes address and phone)
+  const customer = await stripe.customers.retrieve(customerId) as Stripe.Customer;
+
+  // Prepare customer data
+  const customerData = {
+    customer_email: customer.email,
+    customer_name: customer.name,
+    customer_phone: customer.phone,
+    billing_address_line1: customer.address?.line1,
+    billing_address_line2: customer.address?.line2,
+    billing_address_city: customer.address?.city,
+    billing_address_state: customer.address?.state,
+    billing_address_postal_code: customer.address?.postal_code,
+    billing_address_country: customer.address?.country,
+  };
+
   const { error } = await supabase
     .from('subscriptions')
     .upsert(
@@ -102,6 +119,7 @@ async function handleCheckoutCompleted(
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
         cancel_at_period_end: subscription.cancel_at_period_end,
+        ...customerData,
         updated_at: new Date().toISOString(),
       },
       {
@@ -115,6 +133,7 @@ async function handleCheckoutCompleted(
   }
 
   console.log(`Subscription created/updated for user ${userId}, app ${app}`);
+  console.log(`Customer data saved: ${customer.email}, ${customer.phone}`);
 }
 
 /**
