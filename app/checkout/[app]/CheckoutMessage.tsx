@@ -17,7 +17,7 @@ export function CheckoutMessage({ type, appDisplayName, retryUrl }: CheckoutMess
   if (type === 'canceled') {
     return (
       <AuthCard
-        title="Checkout Cancelado"
+        title="Checkout Canceled"
         subtitle={appDisplayName}
       >
         <div className="flex justify-center mb-6">
@@ -28,17 +28,17 @@ export function CheckoutMessage({ type, appDisplayName, retryUrl }: CheckoutMess
 
         <Alert
           type="warning"
-          message="Você cancelou o processo de pagamento. Quando estiver pronto, clique abaixo para tentar novamente."
+          message="You canceled the payment process. When you're ready, click below to try again."
           className="mb-6"
         />
 
         <Button onClick={handleRetry} fullWidth variant="accent">
           <RefreshCw className="w-5 h-5" />
-          Tentar Novamente
+          Try Again
         </Button>
 
         <p className="text-xs text-center text-onsite-text-muted mt-4">
-          Você pode fechar esta página e voltar ao app a qualquer momento.
+          You can close this page and return to the app at any time.
         </p>
       </AuthCard>
     );
@@ -47,7 +47,7 @@ export function CheckoutMessage({ type, appDisplayName, retryUrl }: CheckoutMess
   // Error state
   return (
     <AuthCard
-      title="Erro no Checkout"
+      title="Checkout Error"
       subtitle={appDisplayName}
     >
       <div className="flex justify-center mb-6">
@@ -58,19 +58,19 @@ export function CheckoutMessage({ type, appDisplayName, retryUrl }: CheckoutMess
 
       <Alert
         type="error"
-        message="Ocorreu um erro ao iniciar o pagamento. Por favor, tente novamente."
+        message="An error occurred while starting the payment. Please try again."
         className="mb-6"
       />
 
       <Button onClick={handleRetry} fullWidth variant="accent">
         <RefreshCw className="w-5 h-5" />
-        Tentar Novamente
+        Try Again
       </Button>
 
       <p className="text-xs text-center text-onsite-text-muted mt-4">
-        Se o problema persistir, entre em contato com{' '}
-        <a href="mailto:suporte@onsiteclub.ca" className="text-onsite-accent hover:underline">
-          suporte@onsiteclub.ca
+        If the problem persists, contact{' '}
+        <a href="mailto:support@onsiteclub.ca" className="text-onsite-accent hover:underline">
+          support@onsiteclub.ca
         </a>
       </p>
     </AuthCard>

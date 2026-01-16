@@ -49,8 +49,8 @@ export function SuccessClient({
 
   return (
     <AuthCard
-      title="Pagamento Confirmado!"
-      subtitle={`Sua assinatura do ${appDisplayName} está ativa`}
+      title="Payment Confirmed!"
+      subtitle={`Your ${appDisplayName} subscription is now active`}
     >
       {/* Success Icon */}
       <div className="flex justify-center mb-6">
@@ -62,10 +62,10 @@ export function SuccessClient({
       {/* Success Message */}
       <div className="text-center mb-6">
         <p className="text-onsite-text-secondary mb-2">
-          Obrigado por assinar! Todos os recursos premium já estão disponíveis.
+          Thank you for subscribing! All premium features are now available.
         </p>
         <p className="text-sm text-onsite-text-muted">
-          Um recibo foi enviado para seu email.
+          A receipt has been sent to your email.
         </p>
       </div>
 
@@ -78,13 +78,13 @@ export function SuccessClient({
             <Monitor className="w-5 h-5 text-onsite-accent" />
           )}
           <span className="font-medium text-onsite-dark">
-            {isMobileApp ? 'Voltar ao App' : 'Voltar ao Site'}
+            {isMobileApp ? 'Return to App' : 'Return to Website'}
           </span>
         </div>
         <p className="text-sm text-onsite-text-secondary">
           {isMobileApp
-            ? 'Clique no botão abaixo para voltar ao aplicativo e começar a usar os recursos premium.'
-            : 'Você será redirecionado automaticamente ou clique no botão abaixo.'}
+            ? 'Click the button below to return to the app and start using premium features.'
+            : 'You will be redirected automatically or click the button below.'}
         </p>
       </div>
 
@@ -96,23 +96,23 @@ export function SuccessClient({
         className="mb-4"
       >
         <ArrowRight className="w-5 h-5" />
-        {isMobileApp ? 'Abrir App' : 'Voltar ao Site'}
+        {isMobileApp ? 'Open App' : 'Return to Website'}
         <span className="text-sm opacity-75">({countdown}s)</span>
       </Button>
 
       {/* Help Text */}
       <p className="text-xs text-center text-onsite-text-muted">
         {isMobileApp
-          ? 'Se o app não abrir automaticamente, verifique se está instalado em seu dispositivo.'
-          : 'Você será redirecionado automaticamente em alguns segundos.'}
+          ? 'If the app doesn\'t open automatically, make sure it\'s installed on your device.'
+          : 'You will be redirected automatically in a few seconds.'}
       </p>
 
       {/* Manage Subscription Link */}
       <div className="mt-6 pt-4 border-t border-onsite-gray">
         <p className="text-xs text-center text-onsite-text-muted">
-          Precisa gerenciar sua assinatura?{' '}
+          Need to manage your subscription?{' '}
           <a href="/manage" className="text-onsite-accent hover:underline">
-            Clique aqui
+            Click here
           </a>
         </p>
       </div>

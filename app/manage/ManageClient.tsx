@@ -37,27 +37,27 @@ const appDisplayNames: Record<string, string> = {
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   active: {
-    label: 'Ativa',
+    label: 'Active',
     color: 'text-green-600 bg-green-100',
     icon: <CheckCircle className="w-4 h-4" />,
   },
   trialing: {
-    label: 'Teste',
+    label: 'Trial',
     color: 'text-blue-600 bg-blue-100',
     icon: <Clock className="w-4 h-4" />,
   },
   canceled: {
-    label: 'Cancelada',
+    label: 'Canceled',
     color: 'text-gray-600 bg-gray-100',
     icon: <XCircle className="w-4 h-4" />,
   },
   past_due: {
-    label: 'Pagamento Pendente',
+    label: 'Past Due',
     color: 'text-red-600 bg-red-100',
     icon: <AlertTriangle className="w-4 h-4" />,
   },
   inactive: {
-    label: 'Inativa',
+    label: 'Inactive',
     color: 'text-gray-600 bg-gray-100',
     icon: <XCircle className="w-4 h-4" />,
   },
@@ -83,20 +83,20 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Erro ao abrir portal');
+        throw new Error(data.error || 'Error opening portal');
       }
 
       // Redirect to Stripe Customer Portal
       window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro desconhecido');
+      setError(err instanceof Error ? err.message : 'Unknown error');
       setLoading(null);
     }
   };
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('pt-BR', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
@@ -109,8 +109,8 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
 
   return (
     <AuthCard
-      title="Minhas Assinaturas"
-      subtitle="Gerencie suas assinaturas do OnSite Club"
+      title="My Subscriptions"
+      subtitle="Manage your OnSite Club subscriptions"
     >
       {error && (
         <Alert type="error" message={error} className="mb-4" />
@@ -119,7 +119,7 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
       {/* User Info */}
       <div className="text-sm text-onsite-text-muted mb-4">
         <p>
-          Logado como: <span className="font-medium text-onsite-dark">{userEmail}</span>
+          Logged in as: <span className="font-medium text-onsite-dark">{userEmail}</span>
         </p>
       </div>
 
@@ -127,10 +127,10 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
       {filterApp && (
         <div className="bg-onsite-gray rounded-lg px-3 py-2 mb-4 flex items-center justify-between">
           <span className="text-sm text-onsite-text-secondary">
-            Mostrando: {appDisplayNames[filterApp] || filterApp}
+            Showing: {appDisplayNames[filterApp] || filterApp}
           </span>
           <a href="/manage" className="text-xs text-onsite-accent hover:underline">
-            Ver todas
+            View all
           </a>
         </div>
       )}
@@ -139,12 +139,12 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
       {subscriptions.length === 0 ? (
         <div className="text-center py-8">
           <CreditCard className="w-12 h-12 text-onsite-text-muted mx-auto mb-4" />
-          <p className="text-onsite-text-secondary mb-2">Nenhuma assinatura encontrada</p>
+          <p className="text-onsite-text-secondary mb-2">No subscriptions found</p>
           <p className="text-sm text-onsite-text-muted mb-4">
-            Você ainda não possui assinaturas ativas.
+            You don&apos;t have any active subscriptions yet.
           </p>
           <Button variant="accent" onClick={() => (window.location.href = '/')}>
-            Ver planos disponíveis
+            View available plans
           </Button>
         </div>
       ) : (
@@ -168,7 +168,7 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
                       {status.icon}
                       {status.label}
                       {subscription.cancel_at_period_end && isActive && (
-                        <span className="ml-1">(cancela em breve)</span>
+                        <span className="ml-1">(cancels soon)</span>
                       )}
                     </div>
                   </div>
@@ -180,8 +180,8 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
                     <Calendar className="w-4 h-4" />
                     <span>
                       {subscription.cancel_at_period_end
-                        ? `Acesso até: ${formatDate(subscription.current_period_end)}`
-                        : `Próxima cobrança: ${formatDate(subscription.current_period_end)}`}
+                        ? `Access until: ${formatDate(subscription.current_period_end)}`
+                        : `Next billing: ${formatDate(subscription.current_period_end)}`}
                     </span>
                   </div>
                 )}
@@ -195,7 +195,7 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
                     className="w-full"
                   >
                     <Settings className="w-4 h-4" />
-                    Gerenciar no Stripe
+                    Manage on Stripe
                     <ExternalLink className="w-3 h-3 ml-1" />
                   </Button>
                 )}
@@ -209,8 +209,7 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
       {activeSubscriptions.length > 0 && (
         <div className="mt-6 pt-4 border-t border-onsite-gray">
           <p className="text-sm text-onsite-text-muted text-center">
-            Você tem {activeSubscriptions.length} assinatura
-            {activeSubscriptions.length > 1 ? 's' : ''} ativa
+            You have {activeSubscriptions.length} active subscription
             {activeSubscriptions.length > 1 ? 's' : ''}.
           </p>
         </div>
@@ -219,9 +218,9 @@ export function ManageClient({ subscriptions, userEmail, filterApp }: ManageClie
       {/* Help */}
       <div className="mt-4 text-center">
         <p className="text-xs text-onsite-text-muted">
-          Precisa de ajuda?{' '}
-          <a href="mailto:suporte@onsiteclub.ca" className="text-onsite-accent hover:underline">
-            Entre em contato
+          Need help?{' '}
+          <a href="mailto:support@onsiteclub.ca" className="text-onsite-accent hover:underline">
+            Contact us
           </a>
         </p>
       </div>

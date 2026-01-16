@@ -1,6 +1,6 @@
 'use client';
 
-import { AuthCard, Button } from '@/components';
+import { AuthCard } from '@/components';
 import {
   Calculator,
   Clock,
@@ -25,21 +25,21 @@ const apps = [
   {
     id: 'calculator',
     name: 'OnSite Calculator',
-    description: 'Calculadora profissional com reconhecimento de voz',
+    description: 'Professional calculator with voice recognition',
     icon: Calculator,
     color: 'bg-blue-100 text-blue-600',
   },
   {
     id: 'timekeeper',
     name: 'OnSite Timekeeper',
-    description: 'Controle de ponto e horas trabalhadas',
+    description: 'Time tracking and work hours management',
     icon: Clock,
     color: 'bg-green-100 text-green-600',
   },
   {
     id: 'dashboard',
     name: 'OnSite Dashboard',
-    description: 'Dashboard completo com analytics',
+    description: 'Complete dashboard with analytics',
     icon: LayoutDashboard,
     color: 'bg-purple-100 text-purple-600',
   },
@@ -54,18 +54,18 @@ export function HomeClient({ userEmail, subscriptions }: HomeClientProps) {
   const isActive = (status: string) => status === 'active' || status === 'trialing';
 
   return (
-    <AuthCard title="OnSite Club" subtitle="Central de Assinaturas">
+    <AuthCard title="OnSite Club" subtitle="Subscription Center">
       {/* User Info */}
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-onsite-gray">
         <div className="text-sm text-onsite-text-secondary">
-          Olá, <span className="font-medium text-onsite-dark">{userEmail}</span>
+          Hello, <span className="font-medium text-onsite-dark">{userEmail}</span>
         </div>
         <a
           href="/logout"
           className="text-sm text-onsite-text-muted hover:text-onsite-dark flex items-center gap-1"
         >
           <LogOut className="w-4 h-4" />
-          Sair
+          Sign out
         </a>
       </div>
 
@@ -111,14 +111,14 @@ export function HomeClient({ userEmail, subscriptions }: HomeClientProps) {
                       className="text-onsite-accent hover:underline text-sm flex items-center gap-1"
                     >
                       <Settings className="w-4 h-4" />
-                      Gerenciar
+                      Manage
                     </a>
                   ) : (
                     <a
                       href={`/checkout/${app.id}`}
                       className="text-onsite-accent hover:underline text-sm flex items-center gap-1"
                     >
-                      Assinar
+                      Subscribe
                       <ArrowRight className="w-4 h-4" />
                     </a>
                   )}
@@ -136,16 +136,16 @@ export function HomeClient({ userEmail, subscriptions }: HomeClientProps) {
           className="text-onsite-text-muted hover:text-onsite-accent flex items-center gap-1"
         >
           <Settings className="w-4 h-4" />
-          Todas as assinaturas
+          All subscriptions
         </a>
       </div>
 
       {/* Help */}
       <div className="mt-6 pt-4 border-t border-onsite-gray text-center">
         <p className="text-xs text-onsite-text-muted">
-          Precisa de ajuda?{' '}
-          <a href="mailto:suporte@onsiteclub.ca" className="text-onsite-accent hover:underline">
-            Entre em contato
+          Need help?{' '}
+          <a href="mailto:support@onsiteclub.ca" className="text-onsite-accent hover:underline">
+            Contact us
           </a>
         </p>
       </div>
